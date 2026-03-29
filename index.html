@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Страховой агент | Интерактивный гайд по страхованию</title>
+    <link rel="stylesheet" href="styles.css">
+    <meta name="theme-color" content="#667eea">
+    <meta name="description" content="Интерактивная игра-гайд по страхованию для подростков. Помоги клиентам выбрать правильную страховку!">
+</head>
+<body>
+    <div class="container">
+        <!-- Шапка с аватаром агента -->
+        <header class="header">
+            <div class="agent-info">
+                <div class="agent-avatar">
+                    <img src="images/agent.png" alt="Страховой агент" class="agent-img" onerror="this.style.display='none'; this.parentElement.innerHTML='👤'">
+                </div>
+                <div>
+                    <h1>🎯 Страховой агент</h1>
+                    <p>Помоги клиентам выбрать правильную страховку</p>
+                </div>
+            </div>
+            <div class="score-board">
+                <div class="score-label">🏆 Очки</div>
+                <div class="score-value" id="score">0</div>
+                <div class="score-max" id="max-score">/ 140</div>
+            </div>
+        </header>
+
+        <!-- Основной игровой экран -->
+        <main id="game-area">
+            <!-- Здесь динамически загружается контент -->
+        </main>
+
+        <!-- Кнопки действий -->
+        <div class="action-buttons">
+            <button id="reset-btn" class="action-btn reset-btn">↺ Начать заново</button>
+            <button id="save-btn" class="action-btn save-btn">💾 Сохранить прогресс</button>
+        </div>
+    </div>
+
+    <script src="cases.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

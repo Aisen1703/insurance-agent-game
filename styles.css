@@ -1,0 +1,681 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 16px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* ========== ШАПКА ========== */
+.header {
+    background: white;
+    border-radius: 20px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.agent-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+
+/* Стили для аватара агента */
+.agent-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.agent-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.agent-info h1 {
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.agent-info p {
+    color: #666;
+    font-size: 0.75rem;
+}
+
+.score-board {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    padding: 8px 16px;
+    border-radius: 30px;
+    color: white;
+    text-align: center;
+    min-width: 100px;
+}
+
+.score-label {
+    font-size: 0.7rem;
+    opacity: 0.9;
+}
+
+.score-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.score-max {
+    font-size: 0.7rem;
+    opacity: 0.8;
+}
+
+/* ========== ОСНОВНАЯ ИГРОВАЯ ЗОНА ========== */
+#game-area {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    min-height: 400px;
+}
+
+/* Прогресс-бар */
+.progress-section {
+    margin-bottom: 20px;
+}
+
+.progress-bar-container {
+    background: #e0e0e0;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-bar-fill {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 6px 12px;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 20px;
+    transition: width 0.3s ease;
+    white-space: nowrap;
+}
+
+.progress-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #666;
+}
+
+/* Карточка кейса */
+.case-card {
+    text-align: center;
+}
+
+.case-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+
+.case-title {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.case-description {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* ========== КЛИЕНТЫ ========== */
+.clients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.client-card {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 2px solid transparent;
+}
+
+.client-card:active {
+    transform: scale(0.98);
+}
+
+.client-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    border-color: #667eea;
+}
+
+/* Стили для аватара клиента */
+.client-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 12px auto;
+    overflow: hidden;
+    background: linear-gradient(135deg, #667eea20, #764ba220);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.client-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.avatar-emoji {
+    font-size: 2.5rem;
+}
+
+.client-name {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 6px;
+}
+
+.client-problem {
+    color: #666;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    font-style: italic;
+}
+
+/* ========== ДИАЛОГОВОЕ ОКНО ========== */
+.dialog-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 16px;
+}
+
+.dialog-content {
+    background: white;
+    border-radius: 24px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 24px;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Стили для изображения в диалоге */
+.dialog-client-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin: 0 auto;
+    display: block;
+}
+
+.client-avatar-large {
+    text-align: center;
+}
+
+.dialog-question {
+    font-size: 1rem;
+    margin: 16px 0;
+    line-height: 1.5;
+    background: #f0f0f0;
+    padding: 16px;
+    border-radius: 16px;
+}
+
+.dialog-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 16px 0;
+}
+
+.dialog-option {
+    background: #f0f0f0;
+    padding: 14px 16px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    border: none;
+    font-size: 0.9rem;
+    font-family: inherit;
+}
+
+.dialog-option:active {
+    transform: scale(0.98);
+}
+
+.dialog-option:hover {
+    background: #667eea;
+    color: white;
+}
+
+.feedback-box {
+    padding: 16px;
+    border-radius: 16px;
+    margin: 16px 0;
+}
+
+.feedback-correct {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.feedback-wrong {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* ========== КНОПКИ ========== */
+.next-btn, .primary-btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 40px;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+
+.next-btn:active, .primary-btn:active {
+    transform: scale(0.98);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 40px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: bold;
+    flex: 1;
+    min-width: 140px;
+}
+
+.reset-btn {
+    background: #ff4757;
+    color: white;
+}
+
+.reset-btn:active {
+    background: #e84118;
+}
+
+.save-btn {
+    background: #28a745;
+    color: white;
+}
+
+.save-btn:active {
+    background: #218838;
+}
+
+/* ========== РЕЗУЛЬТАТЫ ========== */
+.results-card {
+    text-align: center;
+}
+
+.results-score {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #667eea;
+    margin: 16px 0;
+}
+
+.results-message {
+    font-size: 1rem;
+    margin: 16px 0;
+    line-height: 1.4;
+}
+
+.case-complete {
+    padding: 20px;
+}
+
+.case-score {
+    margin: 20px 0;
+}
+
+.score-badge {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #667eea;
+    display: block;
+}
+
+/* ========== ДОСКА ЛИДЕРОВ ========== */
+.leaderboard-section {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 2px solid #e0e0e0;
+}
+
+.leaderboard-section h3 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 16px;
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #f8f9fa;
+    border-radius: 16px;
+    overflow: hidden;
+    font-size: 0.8rem;
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+    padding: 10px 6px;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.leaderboard-table th {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    font-weight: bold;
+    font-size: 0.75rem;
+}
+
+.leaderboard-table tr:hover {
+    background: #f0f0f0;
+}
+
+.leaderboard-table .current-user {
+    background: #fff3cd;
+    font-weight: bold;
+}
+
+.top-1 td:first-child {
+    background: gold;
+    color: #333;
+    font-weight: bold;
+}
+
+.top-2 td:first-child {
+    background: silver;
+    color: #333;
+    font-weight: bold;
+}
+
+.top-3 td:first-child {
+    background: #cd7f32;
+    color: #333;
+    font-weight: bold;
+}
+
+/* ========== ШЕРИНГ КНОПКИ ========== */
+.share-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.share-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: transform 0.2s;
+    flex: 1;
+    min-width: 110px;
+}
+
+.share-btn:active {
+    transform: scale(0.97);
+}
+
+.share-telegram {
+    background: #0088cc;
+    color: white;
+}
+
+.share-vk {
+    background: #0077ff;
+    color: white;
+}
+
+.share-copy {
+    background: #6c757d;
+    color: white;
+}
+
+/* ========== ФОРМА ВВОДА ИМЕНИ ========== */
+.name-input-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+}
+
+.name-input-content {
+    background: white;
+    border-radius: 24px;
+    padding: 24px;
+    max-width: 350px;
+    width: 100%;
+    text-align: center;
+}
+
+.name-input-content h2 {
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+    color: #333;
+}
+
+.name-input-field {
+    width: 100%;
+    padding: 14px;
+    font-size: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 40px;
+    margin-bottom: 16px;
+    outline: none;
+    text-align: center;
+}
+
+.name-input-field:focus {
+    border-color: #667eea;
+}
+
+/* ========== УВЕДОМЛЕНИЕ ========== */
+.toast-notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 40px;
+    font-size: 0.8rem;
+    z-index: 1500;
+    animation: fadeOut 2s ease forwards;
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    70% { opacity: 1; }
+    100% { opacity: 0; transform: translateX(-50%) translateY(20px); visibility: hidden; }
+}
+
+/* ========== АДАПТИВНОСТЬ ========== */
+@media (max-width: 600px) {
+    body {
+        padding: 12px;
+    }
+    
+    .header {
+        padding: 12px 16px;
+    }
+    
+    .agent-avatar {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .agent-info h1 {
+        font-size: 1rem;
+    }
+    
+    .score-board {
+        padding: 6px 12px;
+        min-width: 80px;
+    }
+    
+    .score-value {
+        font-size: 1.2rem;
+    }
+    
+    #game-area {
+        padding: 16px;
+    }
+    
+    .case-title {
+        font-size: 1.3rem;
+    }
+    
+    .clients-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .client-card {
+        padding: 12px;
+    }
+    
+    .client-avatar {
+        width: 55px;
+        height: 55px;
+    }
+    
+    .dialog-content {
+        padding: 20px;
+    }
+    
+    .action-btn {
+        padding: 10px 16px;
+        font-size: 0.85rem;
+        min-width: 120px;
+    }
+    
+    .leaderboard-table th,
+    .leaderboard-table td {
+        padding: 8px 4px;
+        font-size: 0.7rem;
+    }
+    
+    .share-btn {
+        padding: 8px 12px;
+        font-size: 0.75rem;
+        min-width: 90px;
+    }
+}
+
+@media (min-width: 601px) and (max-width: 1024px) {
+    .container {
+        max-width: 90%;
+    }
+    
+    .clients-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1025px) {
+    .container {
+        max-width: 1000px;
+    }
+    
+    .clients-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .client-card:hover {
+        transform: translateY(-5px);
+    }
+}
