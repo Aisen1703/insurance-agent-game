@@ -3,40 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Страховой агент | Интерактивный гайд по страхованию</title>
+    <title>Страховой агент | Симулятор</title>
     <link rel="stylesheet" href="styles.css">
-    <meta name="theme-color" content="#667eea">
-    <meta name="description" content="Интерактивная игра-гайд по страхованию для подростков. Помоги клиентам выбрать правильную страховку!">
+    <meta name="theme-color" content="#2c3e50">
+    <meta name="description" content="Симулятор страхового агента. Помоги клиентам выбрать правильную страховку и стань лучшим агентом!">
 </head>
 <body>
-    <div class="container">
-        <!-- Шапка с маленьким аватаром агента -->
-        <header class="header">
-            <div class="agent-info">
+    <div class="simulator-container">
+        <!-- Верхняя панель с офисом -->
+        <header class="office-header">
+            <div class="office-logo">
                 <div class="agent-avatar">
-                    <img src="images/agent.png" alt="Страховой агент" class="agent-img" onerror="this.style.display='none'; this.parentElement.innerHTML='👤'">
+                    <img src="images/agent.png" alt="Вы" class="agent-img" onerror="this.style.display='none'; this.parentElement.innerHTML='👔'">
                 </div>
-                <div>
-                    <h1>🎯 Страховой агент</h1>
-                    <p>Помоги клиентам выбрать правильную страховку</p>
+                <div class="office-info">
+                    <h1>🏢 Страховая компания "Защита+"</h1>
+                    <p>Страховой агент: <span id="player-name-display">Агент</span></p>
                 </div>
             </div>
-            <div class="score-board">
-                <div class="score-label">🏆 Очки</div>
-                <div class="score-value" id="score">0</div>
-                <div class="score-max" id="max-score">/ 140</div>
+            
+            <!-- Кнопка переключения темы -->
+            <button id="theme-toggle" class="theme-toggle-btn" aria-label="Переключить тему">
+                🌙 Тёмная тема
+            </button>
+            
+            <div class="stats-panel">
+                <div class="stat">
+                    <span class="stat-icon">🏆</span>
+                    <span class="stat-value" id="score">0</span>
+                    <span class="stat-label">очков</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-icon">⭐</span>
+                    <span class="stat-value" id="rating">0</span>
+                    <span class="stat-label">рейтинг</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-icon">👥</span>
+                    <span class="stat-value" id="clients-served">0</span>
+                    <span class="stat-label">обслужено</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-icon">📊</span>
+                    <span class="stat-value" id="success-rate">0</span>
+                    <span class="stat-label">% успеха</span>
+                </div>
             </div>
         </header>
 
-        <!-- Основной игровой экран -->
-        <main id="game-area">
-            <!-- Здесь динамически загружается контент -->
-        </main>
+        <!-- Основной контент - офис -->
+        <div class="office-main">
+            <!-- Левая панель - статистика и информация -->
+            <aside class="office-sidebar">
+                <div class="sidebar-card">
+                    <h3>📋 Сегодняшние показатели</h3>
+                    <div class="today-stats">
+                        <div class="today-stat">
+                            <span>✅ Правильных ответов:</span>
+                            <span id="correct-count">0</span>
+                        </div>
+                        <div class="today-stat">
+                            <span>❌ Неправильных:</span>
+                            <span id="wrong-count">0</span>
+                        </div>
+                        <div class="today-stat">
+                            <span>📈 Текущая серия:</span>
+                            <span id="streak">0</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-card">
+                    <h3>🏆 Доска лидеров</h3>
+                    <div id="leaderboard-mini" class="leaderboard-mini">
+                        <div class="loading">Загрузка...</div>
+                    </div>
+                </div>
+                
+                <div class="sidebar-card">
+                    <h3>📖 Подсказка</h3>
+                    <p class="tip-text">💡 Внимательно читай проблему клиента и выбирай страховку, которая лучше всего подходит!</p>
+                </div>
+            </aside>
 
-        <!-- Кнопки действий -->
-        <div class="action-buttons">
-            <button id="reset-btn" class="action-btn reset-btn">↺ Начать заново</button>
-            <button id="save-btn" class="action-btn save-btn">💾 Сохранить прогресс</button>
+            <!-- Центральная часть - рабочий стол с клиентом -->
+            <main class="office-desk">
+                <div id="game-area">
+                    <!-- Здесь появляется клиент -->
+                </div>
+            </main>
+
+            <!-- Правая панель - прогресс и кнопки -->
+            <aside class="office-controls">
+                <div class="controls-card">
+                    <h3>📊 Прогресс</h3>
+                    <div class="progress-ring">
+                        <div class="progress-circle" id="progress-circle">
+                            <span id="progress-percent">0%</span>
+                        </div>
+                    </div>
+                    <div class="progress-text">
+                        <span id="clients-done">0</span>/<span id="total-clients">14</span> клиентов
+                    </div>
+                </div>
+                
+                <div class="controls-card">
+                    <h3>⚙️ Управление</h3>
+                    <button id="reset-btn" class="control-btn reset-btn">🔄 Начать заново</button>
+                    <button id="save-btn" class="control-btn save-btn">💾 Сохранить прогресс</button>
+                </div>
+            </aside>
         </div>
     </div>
 
