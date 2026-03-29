@@ -4,7 +4,6 @@ let currentClientIndex = 0;
 let totalScore = 0;
 let gameCompleted = false;
 let playerName = localStorage.getItem('playerName') || '';
-let waitingForNextCase = false;
 
 const TOTAL_POSSIBLE_SCORE = 140; // 14 клиентов × 10 баллов
 
@@ -21,7 +20,7 @@ if (maxScoreSpan) {
 
 // ========== КЛАСС ДЛЯ ТАБЛИЦЫ ЛИДЕРОВ ==========
 class Leaderboard {
-    static STORAGE_KEY = 'insurance_leaderboard_v3';
+    static STORAGE_KEY = 'insurance_leaderboard_v7';
     
     static getAll() {
         const data = localStorage.getItem(this.STORAGE_KEY);
@@ -55,7 +54,7 @@ class Leaderboard {
 
 // ========== КЛАСС ДЛЯ СОХРАНЕНИЯ ПРОГРЕССА ==========
 class GameSave {
-    static STORAGE_KEY = 'insurance_game_save_v3';
+    static STORAGE_KEY = 'insurance_game_save_v7';
     
     static save(state) {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(state));
@@ -77,9 +76,7 @@ function showToast(message, duration = 2000) {
     toast.className = 'toast-notification';
     toast.textContent = message;
     document.body.appendChild(toast);
-    setTimeout(() => {
-        toast.remove();
-    }, duration);
+    setTimeout(() => toast.remove(), duration);
 }
 
 function updateScore() {
@@ -105,19 +102,33 @@ function getProcessedClients() {
     return processed;
 }
 
+function getCurrentCase() {
+    if (currentCaseIndex >= caseOrder.length) return null;
+    const caseId = caseOrder[currentCaseIndex];
+    return casesData[caseId];
+}
+
+function getCurrentClient() {
+    const currentCase = getCurrentCase();
+    if (!currentCase) return null;
+    if (currentClientIndex >= currentCase.clients.length) return null;
+    return currentCase.clients[currentClientIndex];
+}
+
 // ========== ОСНОВНАЯ ЛОГИКА ИГРЫ ==========
 function initGame(loadSaved = true) {
     if (loadSaved) {
         const saved = GameSave.load();
-        if (saved && !saved.gameCompleted && saved.currentCaseIndex !== undefined) {
+        if (saved && !saved.gameCompleted && saved.caseOrder) {
             if (confirm('Найдено сохранение игры. Продолжить с того же места?')) {
+                caseOrder.length = 0;
+                saved.caseOrder.forEach(id => caseOrder.push(id));
                 currentCaseIndex = saved.currentCaseIndex;
                 currentClientIndex = saved.currentClientIndex;
                 totalScore = saved.totalScore;
                 gameCompleted = false;
-                waitingForNextCase = false;
                 updateScore();
-                loadCurrentCase();
+                loadCurrentClient();
                 return;
             } else {
                 GameSave.clear();
@@ -125,19 +136,29 @@ function initGame(loadSaved = true) {
         }
     }
     
-    // Новая игра
+    shuffleCaseOrder();
+    
     currentCaseIndex = 0;
     currentClientIndex = 0;
     totalScore = 0;
     gameCompleted = false;
-    waitingForNextCase = false;
     updateScore();
     
     if (!playerName) {
-        askForName(() => loadCurrentCase());
+        askForName(() => loadCurrentClient());
     } else {
-        loadCurrentCase();
+        loadCurrentClient();
     }
+}
+
+function shuffleCaseOrder() {
+    const allCaseIds = [1, 2, 3, 4, 5, 6];
+    for (let i = allCaseIds.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allCaseIds[i], allCaseIds[j]] = [allCaseIds[j], allCaseIds[i]];
+    }
+    caseOrder.length = 0;
+    allCaseIds.forEach(id => caseOrder.push(id));
 }
 
 function askForName(callback) {
@@ -174,38 +195,40 @@ function askForName(callback) {
     input.focus();
 }
 
-function loadCurrentCase() {
-    if (gameCompleted || waitingForNextCase) return;
+function loadCurrentClient() {
+    if (gameCompleted) return;
     
+    // Проверяем, все ли кейсы пройдены
     if (currentCaseIndex >= caseOrder.length) {
         completeGame();
         return;
     }
     
-    const caseId = caseOrder[currentCaseIndex];
-    const currentCase = casesData[caseId];
+    const currentCase = getCurrentCase();
     
-    // Если все клиенты в кейсе обработаны — показываем результаты кейса
+    // Если все клиенты в текущем кейсе обработаны — переходим к следующему кейсу (без показа результата)
     if (currentClientIndex >= currentCase.clients.length) {
-        showCaseComplete();
+        currentCaseIndex++;
+        currentClientIndex = 0;
+        saveGameProgress();
+        loadCurrentClient();
         return;
     }
     
-    renderCaseScreen(currentCase);
+    const client = getCurrentClient();
+    renderClientScreen(client, currentCase);
 }
 
-function renderCaseScreen(currentCase) {
+function renderClientScreen(client, currentCase) {
     const totalClients = getTotalClients();
     const processedClients = getProcessedClients();
     const progressPercent = (processedClients / totalClients) * 100;
-    const remainingClients = currentCase.clients.slice(currentClientIndex);
+    const caseNumber = currentCaseIndex + 1;
+    const clientNumberInCase = currentClientIndex + 1;
+    const totalClientsInCase = currentCase.clients.length;
     
     gameArea.innerHTML = `
-        <div class="case-card">
-            <div class="case-icon">${currentCase.icon}</div>
-            <h2 class="case-title">${currentCase.title}</h2>
-            <p class="case-description">${currentCase.description}</p>
-            
+        <div class="client-screen">
             <div class="progress-section">
                 <div class="progress-bar-container">
                     <div class="progress-bar-fill" style="width: ${progressPercent}%;">
@@ -213,86 +236,79 @@ function renderCaseScreen(currentCase) {
                     </div>
                 </div>
                 <div class="progress-stats">
-                    <span>📋 Кейс ${currentCaseIndex + 1}/${caseOrder.length}</span>
-                    <span>👥 Клиенты: ${processedClients}/${totalClients}</span>
+                    <span>📋 Кейс ${caseNumber}/${caseOrder.length}: ${currentCase.title}</span>
+                    <span>👥 Клиент ${clientNumberInCase}/${totalClientsInCase}</span>
                     <span>⭐ ${totalScore}/${TOTAL_POSSIBLE_SCORE}</span>
                 </div>
             </div>
             
-            <h3>📋 Выбери клиента, который ждёт твоей помощи:</h3>
-            <div class="clients-grid" id="clients-grid">
-                ${remainingClients.map((client, idx) => `
-                    <div class="client-card" data-client-index="${currentClientIndex + idx}">
-                        <div class="client-avatar">
-                            <img src="${client.imageUrl || ''}" 
-                                 alt="${client.name}"
-                                 class="client-img"
-                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\\"avatar-emoji\\\">${client.avatar}</div>'">
-                        </div>
-                        <div class="client-name">${client.name}</div>
-                        <div class="client-problem">"${client.problem.substring(0, 100)}${client.problem.length > 100 ? '...' : ''}"</div>
-                    </div>
-                `).join('')}
+            <div class="client-card-large">
+                <div class="client-avatar-large">
+                    <img src="${client.imageUrl || ''}" 
+                         alt="${client.name}"
+                         class="client-large-img"
+                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\"avatar-emoji-large\">${client.avatar}</div>'">
+                </div>
+                <h2 class="client-name-large">${client.name}</h2>
+                <div class="client-problem-large">
+                    <strong>📢 Проблема клиента:</strong><br>
+                    "${client.problem}"
+                </div>
+                <button class="help-btn" id="help-client-btn">🤝 Помочь клиенту</button>
             </div>
         </div>
     `;
     
-    // Добавляем обработчики на карточки клиентов
-    document.querySelectorAll('.client-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-            const index = parseInt(card.dataset.clientIndex);
-            startDialogWithClient(currentCase, index);
-        });
+    document.getElementById('help-client-btn').addEventListener('click', () => {
+        showDialog(client);
     });
 }
 
-function startDialogWithClient(currentCase, clientIndex) {
-    const client = currentCase.clients[clientIndex];
-    
-    showDialog(client, (isCorrect) => {
-        if (isCorrect) {
-            totalScore += 10;
-            updateScore();
-        }
-        currentClientIndex++;
-        saveGameProgress();
-        loadCurrentCase();
-    });
-}
-
-function showDialog(client, onComplete) {
+// ========== ДИАЛОГ С БОЛЬШОЙ КАРТИНКОЙ СВЕРХУ И ВАРИАНТАМИ ВНИЗУ ==========
+function showDialog(client) {
     const options = [client.correctChoice, ...client.wrongChoices].sort(() => Math.random() - 0.5);
     let answered = false;
     
     gameArea.innerHTML = `
         <div class="dialog-modal">
-            <div class="dialog-content">
-                <div class="client-avatar-large">
+            <div class="dialog-content dialog-content-large">
+                <!-- Большая картинка клиента сверху -->
+                <div class="client-avatar-dialog-large">
                     <img src="${client.imageUrl || ''}" 
                          alt="${client.name}"
-                         class="dialog-client-img"
-                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\\"font-size: 3rem; text-align: center;\\\">${client.avatar}</div>'">
+                         class="dialog-client-img-large"
+                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\"font-size: 6rem; text-align: center;\">${client.avatar}</div>'">
                 </div>
-                <div style="font-size: 1.2rem; font-weight: bold; text-align: center; margin: 10px 0;">${client.name}</div>
-                <div class="dialog-question">
-                    <strong>Проблема:</strong><br>
-                    "${client.problem}"
+                
+                <!-- Имя клиента -->
+                <h2 class="dialog-client-name">${client.name}</h2>
+                
+                <!-- Вопрос -->
+                <div class="dialog-question-large">
+                    <strong>📋 Какой совет ты дашь клиенту?</strong>
                 </div>
-                <div class="dialog-options">
+                
+                <!-- Варианты ответов внизу -->
+                <div class="dialog-options-large">
                     ${options.map(opt => `
-                        <button class="dialog-option" data-option="${opt.replace(/'/g, '&#39;').replace(/"/g, '&quot;')}">${opt}</button>
+                        <button class="dialog-option-large" data-option="${opt.replace(/'/g, '&#39;').replace(/"/g, '&quot;')}">${opt}</button>
                     `).join('')}
                 </div>
             </div>
         </div>
     `;
     
-    document.querySelectorAll('.dialog-option').forEach(btn => {
+    document.querySelectorAll('.dialog-option-large').forEach(btn => {
         btn.addEventListener('click', () => {
             if (answered) return;
             answered = true;
             const chosen = btn.dataset.option;
             const isCorrect = (chosen === client.correctChoice);
+            
+            if (isCorrect) {
+                totalScore += 10;
+                updateScore();
+            }
             
             const feedbackClass = isCorrect ? 'feedback-correct' : 'feedback-wrong';
             const feedbackMessage = isCorrect 
@@ -301,54 +317,27 @@ function showDialog(client, onComplete) {
             
             gameArea.innerHTML = `
                 <div class="dialog-modal">
-                    <div class="dialog-content">
-                        <div class="feedback-box ${feedbackClass}">
+                    <div class="dialog-content dialog-content-large">
+                        <div class="client-avatar-dialog-large">
+                            <img src="${client.imageUrl || ''}" 
+                                 alt="${client.name}"
+                                 class="dialog-client-img-large"
+                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\"font-size: 6rem; text-align: center;\">${client.avatar}</div>'">
+                        </div>
+                        <div class="feedback-box-large ${feedbackClass}">
                             ${feedbackMessage}
                         </div>
-                        <button class="next-btn" id="continue-btn">Продолжить →</button>
+                        <button class="next-btn-large" id="continue-btn">➡️ Следующий клиент</button>
                     </div>
                 </div>
             `;
             
             document.getElementById('continue-btn').addEventListener('click', () => {
-                onComplete(isCorrect);
+                currentClientIndex++;
+                saveGameProgress();
+                loadCurrentClient();
             });
         });
-    });
-}
-
-function showCaseComplete() {
-    const caseId = caseOrder[currentCaseIndex];
-    const currentCase = casesData[caseId];
-    const caseScore = currentClientIndex * 10;
-    const maxCaseScore = currentCase.clients.length * 10;
-    
-    waitingForNextCase = true;
-    
-    gameArea.innerHTML = `
-        <div class="results-card case-complete">
-            <div class="case-icon">${currentCase.icon}</div>
-            <h2 class="case-title">✅ Кейс "${currentCase.title}" пройден!</h2>
-            <div class="case-score">
-                <div class="score-badge">${caseScore}/${maxCaseScore}</div>
-                <p>очков за этот кейс</p>
-            </div>
-            <div class="case-summary">
-                <p>📊 Ты помог ${currentClientIndex} из ${currentCase.clients.length} клиентов</p>
-                <p>🏆 Общий счёт: ${totalScore}/${TOTAL_POSSIBLE_SCORE}</p>
-            </div>
-            <button class="next-btn" id="next-case-btn">
-                ${currentCaseIndex + 1 >= caseOrder.length ? '🏁 Завершить игру' : '➡️ Следующий кейс'}
-            </button>
-        </div>
-    `;
-    
-    document.getElementById('next-case-btn').addEventListener('click', () => {
-        currentCaseIndex++;
-        currentClientIndex = 0;
-        waitingForNextCase = false;
-        saveGameProgress();
-        loadCurrentCase();
     });
 }
 
@@ -356,7 +345,6 @@ function completeGame() {
     gameCompleted = true;
     GameSave.clear();
     
-    // Сохраняем результат в таблицу лидеров
     Leaderboard.addScore(playerName, totalScore);
     const top10 = Leaderboard.getTop10();
     const rank = Leaderboard.getRank(totalScore);
@@ -372,7 +360,7 @@ function completeGame() {
         message = 'Отличная работа! Ты помог почти всем клиентам. Продолжай в том же духе!';
     } else if (totalScore >= 90) {
         emoji = '👍';
-        message = 'Хороший результат! Ещё немного практики — и ты станешь экспертом!';
+        message = 'Хороший результат! Ещё немного  — и ты станешь экспертом в страховании!';
     } else if (totalScore >= 70) {
         emoji = '📚';
         message = 'Неплохо, но стоит повторить основы страхования. Попробуй пройти гайд ещё раз!';
@@ -454,6 +442,7 @@ function shareResult(platform) {
 function saveGameProgress() {
     if (!gameCompleted && (currentCaseIndex > 0 || currentClientIndex > 0)) {
         GameSave.save({
+            caseOrder: [...caseOrder],
             currentCaseIndex: currentCaseIndex,
             currentClientIndex: currentClientIndex,
             totalScore: totalScore,
