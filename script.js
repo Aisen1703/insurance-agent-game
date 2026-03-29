@@ -41,17 +41,14 @@ function updateStats() {
     const successRate = totalAnswered > 0 ? Math.round((correctAnswers / totalAnswered) * 100) : 0;
     successRateSpan.textContent = successRate;
     
-    // Рейтинг (0-5 звёзд)
     const rating = Math.min(5, Math.floor(totalScore / 28));
     ratingSpan.textContent = '★'.repeat(rating) + '☆'.repeat(5 - rating);
     
-    // Прогресс
     const processed = correctAnswers + wrongAnswers;
     clientsDoneSpan.textContent = processed;
     const progressPercent = (processed / TOTAL_CLIENTS) * 100;
     progressPercentSpan.textContent = Math.round(progressPercent) + '%';
     
-    // Обновляем круговой прогресс
     const progressCircle = document.querySelector('.progress-circle');
     if (progressCircle) {
         const angle = (processed / TOTAL_CLIENTS) * 360;
@@ -284,6 +281,7 @@ function renderClientScreen(client, currentCase) {
     document.getElementById('help-client-btn').onclick = () => showDialog(client);
 }
 
+// ========== ДИАЛОГ: КАРТИНКА СВЕРХУ, ВАРИАНТЫ ОТВЕТОВ ВНИЗУ ==========
 function showDialog(client) {
     const options = [client.correctChoice, ...client.wrongChoices].sort(() => Math.random() - 0.5);
     let answered = false;
@@ -291,15 +289,23 @@ function showDialog(client) {
     gameArea.innerHTML = `
         <div class="dialog-modal-sim">
             <div class="dialog-content-sim">
+                <!-- КАРТИНКА КЛИЕНТА СВЕРХУ -->
                 <div class="client-avatar-dialog-sim">
                     <img src="${client.imageUrl || ''}" 
                          alt="${client.name}"
-                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\"font-size: 4rem;\">${client.avatar}</div>'">
+                         class="dialog-client-img-large"
+                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\"font-size: 5rem; text-align: center;\">${client.avatar}</div>'">
                 </div>
+                
+                <!-- ИМЯ КЛИЕНТА -->
                 <h2 class="dialog-client-name-sim">${client.name}</h2>
+                
+                <!-- ТЕКСТ ВОПРОСА ПОСЕРЕДИНЕ -->
                 <div class="dialog-question-sim">
                     <strong>📋 Какой совет ты дашь клиенту?</strong>
                 </div>
+                
+                <!-- ВАРИАНТЫ ОТВЕТОВ ВНИЗУ -->
                 <div class="dialog-options-sim">
                     ${options.map(opt => `
                         <button class="dialog-option-sim" data-option="${opt.replace(/'/g, '&#39;').replace(/"/g, '&quot;')}">${opt}</button>
@@ -334,10 +340,12 @@ function showDialog(client) {
             gameArea.innerHTML = `
                 <div class="dialog-modal-sim">
                     <div class="dialog-content-sim">
+                        <!-- КАРТИНКА ОСТАЁТСЯ СВЕРХУ -->
                         <div class="client-avatar-dialog-sim">
                             <img src="${client.imageUrl || ''}" 
                                  alt="${client.name}"
-                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\"font-size: 4rem;\">${client.avatar}</div>'">
+                                 class="dialog-client-img-large"
+                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\"font-size: 5rem; text-align: center;\">${client.avatar}</div>'">
                         </div>
                         <div class="feedback-box-sim ${feedbackClass}">
                             ${feedbackMessage}
@@ -402,11 +410,11 @@ function completeGame() {
                     <tbody>
                         ${top10.map((entry, i) => `
                             <tr class="${entry.name === playerName ? 'current-user' : ''}">
-                                <td>${i + 1}</td>
-                                <td>${Leaderboard.escapeHtml(entry.name)}</td>
-                                <td><strong>${entry.score}</strong></td>
-                                <td>${entry.formattedDate?.split(',')[0] || ''}</td>
-                            </tr>
+                                <td>${i + 1} \\n
+                                <td>${Leaderboard.escapeHtml(entry.name)} \\n
+                                <td><strong>${entry.score}</strong> \\n
+                                <td>${entry.formattedDate?.split(',')[0] || ''} \\n
+                             </tr>
                         `).join('')}
                         ${top10.length === 0 ? '<tr><td colspan="4">Пока нет результатов. Стань первым!</td></tr>' : ''}
                     </tbody>
@@ -508,7 +516,6 @@ function toggleTheme() {
 }
 
 // ========== ЗАПУСК ИГРЫ ==========
-// Ждём загрузки DOM перед инициализацией
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     const themeToggle = document.getElementById('theme-toggle');
