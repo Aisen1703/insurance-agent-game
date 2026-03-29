@@ -157,7 +157,7 @@ function getCurrentClient() {
 function initGame(loadSaved = true) {
     if (loadSaved) {
         const saved = GameSave.load();
-        if (saved && !saved.gameCompleted && saved.caseOrder) {
+        if (saved && !saved.gameCompleted && saved.caseOrder && saved.caseOrder.length > 0) {
             if (confirm('Найдено сохранение. Продолжить?')) {
                 caseOrder.length = 0;
                 saved.caseOrder.forEach(id => caseOrder.push(id));
@@ -186,7 +186,7 @@ function initGame(loadSaved = true) {
     updateStats();
     
     if (!playerName) {
-        askForName(() => loadCurrentClient());
+        showWelcomeScreen();
     } else {
         playerNameDisplay.textContent = playerName;
         loadCurrentClient();
@@ -203,14 +203,27 @@ function shuffleCaseOrder() {
     allCaseIds.forEach(id => caseOrder.push(id));
 }
 
-function askForName(callback) {
+// ========== КРАСИВЫЙ ЭКРАН ПРИВЕТСТВИЯ ==========
+function showWelcomeScreen() {
     gameArea.innerHTML = `
-        <div class="name-input-modal" style="position: relative; background: transparent; padding: 0;">
-            <div class="name-input-content" style="max-width: 350px; margin: 0 auto;">
-                <h2>👋 Добро пожаловать в симулятор!</h2>
-                <p style="margin-bottom: 16px;">Введите имя страхового агента</p>
-                <input type="text" id="player-name-input" class="name-input-field" placeholder="Ваше имя" maxlength="20">
-                <button id="submit-name-btn" class="primary-btn">Начать работу →</button>
+        <div class="welcome-screen">
+            <div class="welcome-icon">🛡️</div>
+            <h1 class="welcome-title">Страховой агент</h1>
+            <p class="welcome-subtitle">Симулятор обучения страхованию</p>
+            
+            <div class="name-input-container">
+                <label class="name-input-label">👤 Как к вам обращаться?</label>
+                <input type="text" id="player-name-input" class="name-input-field" placeholder="Введите ваше имя" maxlength="20" autocomplete="off">
+                <button id="submit-name-btn" class="primary-btn">
+                    <span>🚀</span> Начать карьеру <span>→</span>
+                </button>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-item"><span>📱</span> Реальные кейсы</div>
+                <div class="feature-item"><span>🏆</span> Рейтинг агентов</div>
+                <div class="feature-item"><span>💡</span> Обучение в игре</div>
+                <div class="feature-item"><span>⭐</span> Очки и бонусы</div>
             </div>
         </div>
     `;
@@ -218,17 +231,30 @@ function askForName(callback) {
     const input = document.getElementById('player-name-input');
     const submitBtn = document.getElementById('submit-name-btn');
     
-    submitBtn.onclick = () => {
+    // Автофокус на поле ввода
+    if (input) input.focus();
+    
+    const startGame = () => {
         let name = input.value.trim();
-        if (name === '') name = 'Агент ' + Math.floor(Math.random() * 1000);
+        if (name === '') {
+            // Анимируем подсказку
+            input.style.borderColor = '#e74c3c';
+            input.style.boxShadow = '0 0 0 3px rgba(231, 76, 60, 0.2)';
+            setTimeout(() => {
+                input.style.borderColor = '';
+                input.style.boxShadow = '';
+            }, 500);
+            return;
+        }
         playerName = name;
         localStorage.setItem('playerName', playerName);
         playerNameDisplay.textContent = playerName;
-        callback();
+        showToast(`👋 Добро пожаловать, ${playerName}!`);
+        loadCurrentClient();
     };
     
-    input.onkeypress = (e) => { if (e.key === 'Enter') submitBtn.click(); };
-    input.focus();
+    submitBtn.onclick = startGame;
+    input.onkeypress = (e) => { if (e.key === 'Enter') startGame(); };
 }
 
 function loadCurrentClient() {
@@ -254,7 +280,6 @@ function loadCurrentClient() {
 }
 
 function renderClientScreen(client, currentCase) {
-    const processed = correctAnswers + wrongAnswers;
     const caseNumber = currentCaseIndex + 1;
     const clientNumber = currentClientIndex + 1;
     const totalClientsInCase = currentCase.clients.length;
@@ -278,90 +303,130 @@ function renderClientScreen(client, currentCase) {
         </div>
     `;
     
-    document.getElementById('help-client-btn').onclick = () => showDialog(client);
+    const helpBtn = document.getElementById('help-client-btn');
+    if (helpBtn) {
+        helpBtn.onclick = () => showDialog(client);
+    }
 }
 
 // ========== ДИАЛОГ: КАРТИНКА СВЕРХУ, ВАРИАНТЫ ОТВЕТОВ ВНИЗУ ==========
 function showDialog(client) {
+    // Перемешиваем варианты ответов
     const options = [client.correctChoice, ...client.wrongChoices].sort(() => Math.random() - 0.5);
-    let answered = false;
     
-    gameArea.innerHTML = `
-        <div class="dialog-modal-sim">
-            <div class="dialog-content-sim">
-                <!-- КАРТИНКА КЛИЕНТА СВЕРХУ -->
-                <div class="client-avatar-dialog-sim">
-                    <img src="${client.imageUrl || ''}" 
-                         alt="${client.name}"
-                         class="dialog-client-img-large"
-                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\"font-size: 5rem; text-align: center;\">${client.avatar}</div>'">
-                </div>
-                
-                <!-- ИМЯ КЛИЕНТА -->
-                <h2 class="dialog-client-name-sim">${client.name}</h2>
-                
-                <!-- ТЕКСТ ВОПРОСА ПОСЕРЕДИНЕ -->
-                <div class="dialog-question-sim">
-                    <strong>📋 Какой совет ты дашь клиенту?</strong>
-                </div>
-                
-                <!-- ВАРИАНТЫ ОТВЕТОВ ВНИЗУ -->
-                <div class="dialog-options-sim">
-                    ${options.map(opt => `
-                        <button class="dialog-option-sim" data-option="${opt.replace(/'/g, '&#39;').replace(/"/g, '&quot;')}">${opt}</button>
-                    `).join('')}
-                </div>
+    // Сохраняем ссылку на текущий client для использования в замыкании
+    const currentClient = client;
+    
+    // Создаём модальное окно
+    const modal = document.createElement('div');
+    modal.className = 'dialog-modal-sim';
+    
+    // Формируем HTML для модального окна
+    modal.innerHTML = `
+        <div class="dialog-content-sim">
+            <!-- КАРТИНКА КЛИЕНТА СВЕРХУ -->
+            <div class="client-avatar-dialog-sim">
+                <img src="${currentClient.imageUrl || ''}" 
+                     alt="${currentClient.name}"
+                     class="dialog-client-img-large"
+                     onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\"font-size: 5rem; text-align: center;\">${currentClient.avatar}</div>'">
+            </div>
+            
+            <!-- ИМЯ КЛИЕНТА -->
+            <h2 class="dialog-client-name-sim">${currentClient.name}</h2>
+            
+            <!-- ТЕКСТ ВОПРОСА ПОСЕРЕДИНЕ -->
+            <div class="dialog-question-sim">
+                <strong>📋 Какой совет ты дашь клиенту?</strong>
+            </div>
+            
+            <!-- ВАРИАНТЫ ОТВЕТОВ ВНИЗУ -->
+            <div class="dialog-options-sim">
+                ${options.map(opt => `
+                    <button class="dialog-option-sim" data-option="${opt.replace(/'/g, '&#39;').replace(/"/g, '&quot;')}">${opt}</button>
+                `).join('')}
             </div>
         </div>
     `;
     
-    document.querySelectorAll('.dialog-option-sim').forEach(btn => {
-        btn.onclick = () => {
-            if (answered) return;
-            answered = true;
-            const chosen = btn.dataset.option;
-            const isCorrect = (chosen === client.correctChoice);
-            
-            if (isCorrect) {
-                totalScore += 10;
-                correctAnswers++;
-                currentStreak++;
-            } else {
-                wrongAnswers++;
-                currentStreak = 0;
-            }
-            updateStats();
-            
-            const feedbackClass = isCorrect ? 'feedback-correct' : 'feedback-wrong';
-            const feedbackMessage = isCorrect 
-                ? `✅ Правильно! ${client.explanation}`
-                : `❌ Не совсем. ${client.explanation}`;
-            
-            gameArea.innerHTML = `
-                <div class="dialog-modal-sim">
-                    <div class="dialog-content-sim">
-                        <!-- КАРТИНКА ОСТАЁТСЯ СВЕРХУ -->
-                        <div class="client-avatar-dialog-sim">
-                            <img src="${client.imageUrl || ''}" 
-                                 alt="${client.name}"
-                                 class="dialog-client-img-large"
-                                 onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\"font-size: 5rem; text-align: center;\">${client.avatar}</div>'">
-                        </div>
-                        <div class="feedback-box-sim ${feedbackClass}">
-                            ${feedbackMessage}
-                        </div>
-                        <button class="next-btn-sim" id="continue-btn">➡️ Следующий клиент</button>
-                    </div>
+    // Добавляем модальное окно на страницу
+    document.body.appendChild(modal);
+    
+    // Получаем все кнопки вариантов ответов
+    const optionButtons = modal.querySelectorAll('.dialog-option-sim');
+    
+    // Функция обработки ответа
+    const handleAnswer = (btn, selectedOption) => {
+        // Удаляем все обработчики, чтобы нельзя было выбрать несколько раз
+        optionButtons.forEach(btn => {
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+            btn.style.cursor = 'default';
+        });
+        
+        const isCorrect = (selectedOption === currentClient.correctChoice);
+        
+        // Обновляем статистику
+        if (isCorrect) {
+            totalScore += 10;
+            correctAnswers++;
+            currentStreak++;
+        } else {
+            wrongAnswers++;
+            currentStreak = 0;
+        }
+        updateStats();
+        
+        const feedbackClass = isCorrect ? 'feedback-correct' : 'feedback-wrong';
+        const feedbackMessage = isCorrect 
+            ? `✅ Правильно! ${currentClient.explanation}`
+            : `❌ Не совсем. ${currentClient.explanation}`;
+        
+        // Обновляем содержимое модального окна с обратной связью
+        modal.innerHTML = `
+            <div class="dialog-content-sim">
+                <!-- КАРТИНКА ОСТАЁТСЯ СВЕРХУ -->
+                <div class="client-avatar-dialog-sim">
+                    <img src="${currentClient.imageUrl || ''}" 
+                         alt="${currentClient.name}"
+                         class="dialog-client-img-large"
+                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\"font-size: 5rem; text-align: center;\">${currentClient.avatar}</div>'">
                 </div>
-            `;
-            
-            document.getElementById('continue-btn').onclick = () => {
+                <div class="feedback-box-sim ${feedbackClass}">
+                    ${feedbackMessage}
+                </div>
+                <button class="next-btn-sim" id="continue-btn">➡️ Следующий клиент</button>
+            </div>
+        `;
+        
+        // Обработчик для кнопки "Следующий клиент"
+        const continueBtn = document.getElementById('continue-btn');
+        if (continueBtn) {
+            continueBtn.onclick = () => {
+                modal.remove();
                 currentClientIndex++;
                 saveGameProgress();
                 loadCurrentClient();
             };
+        }
+    };
+    
+    // Добавляем обработчики на каждую кнопку
+    optionButtons.forEach(btn => {
+        btn.onclick = () => {
+            const selectedOption = btn.getAttribute('data-option');
+            handleAnswer(btn, selectedOption);
         };
     });
+    
+    // Закрытие по клику на фон (опционально)
+    modal.onclick = (e) => {
+        if (e.target === modal) {
+            if (confirm('Закрыть окно? Прогресс по этому клиенту будет потерян.')) {
+                modal.remove();
+            }
+        }
+    };
 }
 
 function completeGame() {
@@ -405,20 +470,20 @@ function completeGame() {
                 <h4>🏆 Доска лидеров</h4>
                 <table class="leaderboard-table-sim">
                     <thead>
-                        <tr><th>#</th><th>Игрок</th><th>Очки</th><th>Дата</th>\\
+                        <tr><th>#</th><th>Игрок</th><th>Очки</th><th>Дата</th>
                     </thead>
                     <tbody>
                         ${top10.map((entry, i) => `
                             <tr class="${entry.name === playerName ? 'current-user' : ''}">
-                                <td>${i + 1} \\n
-                                <td>${Leaderboard.escapeHtml(entry.name)} \\n
-                                <td><strong>${entry.score}</strong> \\n
-                                <td>${entry.formattedDate?.split(',')[0] || ''} \\n
-                             </tr>
+                                <td>${i + 1} 
+                                <td>${Leaderboard.escapeHtml(entry.name)} 
+                                <td><strong>${entry.score}</strong> 
+                                <td>${entry.formattedDate?.split(',')[0] || ''} 
+                              </tr>
                         `).join('')}
                         ${top10.length === 0 ? '<tr><td colspan="4">Пока нет результатов. Стань первым!</td></tr>' : ''}
                     </tbody>
-                 </table>
+                </table>
             </div>
             <div class="share-buttons-sim">
                 <button class="share-btn-sim share-telegram-sim" id="share-telegram">📱 Telegram</button>
@@ -429,10 +494,16 @@ function completeGame() {
         </div>
     `;
     
-    document.getElementById('play-again').onclick = () => initGame(false);
-    document.getElementById('share-telegram').onclick = () => shareResult('telegram');
-    document.getElementById('share-vk').onclick = () => shareResult('vk');
-    document.getElementById('share-copy').onclick = () => shareResult('copy');
+    const playAgainBtn = document.getElementById('play-again');
+    if (playAgainBtn) playAgainBtn.onclick = () => initGame(false);
+    
+    const shareTelegram = document.getElementById('share-telegram');
+    const shareVk = document.getElementById('share-vk');
+    const shareCopy = document.getElementById('share-copy');
+    
+    if (shareTelegram) shareTelegram.onclick = () => shareResult('telegram');
+    if (shareVk) shareVk.onclick = () => shareResult('vk');
+    if (shareCopy) shareCopy.onclick = () => shareResult('copy');
 }
 
 function shareResult(platform) {
@@ -469,20 +540,24 @@ function saveGameProgress() {
 }
 
 // ========== ОБРАБОТЧИКИ КНОПОК ==========
-resetBtn.onclick = () => {
-    if (confirm('Начать новую смену? Весь прогресс будет потерян.')) {
-        GameSave.clear();
-        initGame(false);
-    }
-};
+if (resetBtn) {
+    resetBtn.onclick = () => {
+        if (confirm('Начать новую смену? Весь прогресс будет потерян.')) {
+            GameSave.clear();
+            initGame(false);
+        }
+    };
+}
 
-saveBtn.onclick = () => {
-    if (!gameCompleted) {
-        saveGameProgress();
-    } else {
-        showToast('Игра уже завершена! Начните новую.');
-    }
-};
+if (saveBtn) {
+    saveBtn.onclick = () => {
+        if (!gameCompleted) {
+            saveGameProgress();
+        } else {
+            showToast('Игра уже завершена! Начните новую.');
+        }
+    };
+}
 
 // ========== ПЕРЕКЛЮЧЕНИЕ ТЁМНОЙ/СВЕТЛОЙ ТЕМЫ ==========
 function initTheme() {
