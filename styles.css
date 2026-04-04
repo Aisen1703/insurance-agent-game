@@ -3,14 +3,12 @@
     padding: 0;
     box-sizing: border-box;
 }
-
 body {
     font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     transition: background 0.3s ease, color 0.3s ease;
     min-height: 100vh;
 }
-
-/* СВЕТЛАЯ ТЕМА */
+/* Светлая тема */
 body.light-theme {
     background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
 }
@@ -20,8 +18,7 @@ body.light-theme .sidebar-card, body.light-theme .controls-card { background: wh
 body.light-theme .office-desk { background: white; }
 body.light-theme .dialog-content-sim { background: white; }
 body.light-theme .dialog-question-sim { background: #f0f0f0; color: #333; }
-
-/* ТЁМНАЯ ТЕМА */
+/* Тёмная тема */
 body.dark-theme {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
 }
@@ -31,8 +28,7 @@ body.dark-theme .sidebar-card, body.dark-theme .controls-card { background: #0f1
 body.dark-theme .office-desk { background: #1e293b; }
 body.dark-theme .dialog-content-sim { background: #0f172a; }
 body.dark-theme .dialog-question-sim { background: #1e293b; color: #cbd5e1; }
-
-/* КНОПКА ПЕРЕКЛЮЧЕНИЯ ТЕМЫ */
+/* Кнопка темы */
 .theme-toggle-btn {
     background: rgba(255,255,255,0.2);
     border: none;
@@ -46,8 +42,7 @@ body.dark-theme .dialog-question-sim { background: #1e293b; color: #cbd5e1; }
     backdrop-filter: blur(5px);
 }
 .theme-toggle-btn:hover { background: rgba(255,255,255,0.3); transform: scale(1.02); }
-
-/* ШАПКА */
+/* Шапка */
 .office-header {
     padding: 20px 30px;
     display: flex;
@@ -67,8 +62,7 @@ body.dark-theme .dialog-question-sim { background: #1e293b; color: #cbd5e1; }
 .agent-img { width: 100%; height: 100%; object-fit: cover; }
 .office-info h1 { color: white; font-size: 1.3rem; margin-bottom: 5px; }
 .office-info p { color: #bdc3c7; font-size: 0.85rem; }
-
-/* СТАТИСТИКА */
+/* Панель статистики */
 .stats-panel {
     display: flex; gap: 25px;
     background: rgba(0,0,0,0.3);
@@ -78,8 +72,7 @@ body.dark-theme .dialog-question-sim { background: #1e293b; color: #cbd5e1; }
 .stat-icon { font-size: 1.2rem; }
 .stat-value { font-size: 1.5rem; font-weight: bold; color: #f39c12; }
 .stat-label { font-size: 0.7rem; color: #bdc3c7; }
-
-/* ОСНОВНАЯ ОБЛАСТЬ */
+/* Основная сетка */
 .office-main { display: flex; flex: 1; padding: 20px; gap: 20px; }
 .office-sidebar { width: 280px; display: flex; flex-direction: column; gap: 20px; }
 .sidebar-card {
@@ -104,24 +97,18 @@ body.dark-theme .dialog-question-sim { background: #1e293b; color: #cbd5e1; }
 .leaderboard-mini-item .score { font-weight: bold; }
 .current-user-mini { background: #fff3cd; border-radius: 8px; padding: 5px 8px; margin-top: 5px; }
 .tip-text { font-size: 0.85rem; line-height: 1.4; color: #666; }
-
-/* ЦЕНТРАЛЬНАЯ ЧАСТЬ */
-.office-desk { 
-    flex: 1; 
-    border-radius: 24px; 
-    padding: 25px; 
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15); 
+/* Центр */
+.office-desk {
+    flex: 1;
+    border-radius: 24px;
+    padding: 25px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
     min-height: 500px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.client-card-sim { 
-    text-align: center; 
-    animation: fadeIn 0.5s ease;
-    max-width: 600px;
-    margin: 0 auto;
-}
+.client-card-sim { text-align: center; animation: fadeIn 0.5s ease; max-width: 600px; margin: 0 auto; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 .client-avatar-sim {
     width: 180px; height: 180px; border-radius: 50%; margin: 0 auto 20px;
@@ -141,160 +128,7 @@ body.dark-theme .dialog-question-sim { background: #1e293b; color: #cbd5e1; }
     margin-top: 10px; box-shadow: 0 4px 15px rgba(243,156,18,0.3);
 }
 .help-btn-sim:hover { transform: translateY(-2px); }
-
-/* ========== КРАСИВОЕ ПРИВЕТСТВИЕ (WELCOME SCREEN) ========== */
-.welcome-screen {
-    max-width: 550px;
-    width: 100%;
-    text-align: center;
-    animation: fadeInUp 0.6s ease;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.welcome-icon {
-    font-size: 5rem;
-    margin-bottom: 10px;
-    animation: bounce 1s ease infinite;
-}
-
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-}
-
-.welcome-title {
-    font-size: 2rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #f39c12, #e67e22);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    margin-bottom: 12px;
-}
-
-.welcome-subtitle {
-    font-size: 1rem;
-    color: #666;
-    margin-bottom: 32px;
-}
-
-body.dark-theme .welcome-subtitle {
-    color: #94a3b8;
-}
-
-.name-input-container {
-    background: rgba(243, 156, 18, 0.1);
-    border-radius: 32px;
-    padding: 32px 28px;
-    margin: 20px 0;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(243, 156, 18, 0.3);
-}
-
-.name-input-label {
-    display: block;
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 12px;
-    color: #f39c12;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.name-input-field {
-    width: 100%;
-    padding: 16px 20px;
-    font-size: 1.1rem;
-    border: 2px solid #e2e8f0;
-    border-radius: 60px;
-    background: white;
-    font-family: inherit;
-    transition: all 0.3s ease;
-    text-align: center;
-    font-weight: 500;
-}
-
-body.dark-theme .name-input-field {
-    background: #1e293b;
-    border-color: #334155;
-    color: #f1f5f9;
-}
-
-.name-input-field:focus {
-    outline: none;
-    border-color: #f39c12;
-    box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.2);
-    transform: scale(1.02);
-}
-
-.name-input-field::placeholder {
-    color: #94a3b8;
-    font-weight: 400;
-}
-
-.primary-btn {
-    background: linear-gradient(135deg, #f39c12, #e67e22);
-    color: white;
-    border: none;
-    padding: 16px 32px;
-    border-radius: 60px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    width: 100%;
-    margin-top: 20px;
-    font-family: inherit;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-}
-
-.primary-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(243, 156, 18, 0.4);
-}
-
-.primary-btn:active {
-    transform: translateY(0);
-}
-
-.features-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    margin-top: 32px;
-}
-
-.feature-item {
-    padding: 12px;
-    border-radius: 20px;
-    background: rgba(243, 156, 18, 0.08);
-    font-size: 0.85rem;
-    font-weight: 500;
-}
-
-.feature-item span {
-    font-size: 1.2rem;
-    margin-right: 8px;
-}
-
-body.dark-theme .feature-item {
-    background: rgba(243, 156, 18, 0.15);
-}
-
-/* ========== ДИАЛОГ: КАРТИНКА СВЕРХУ, ВАРИАНТЫ ОТВЕТОВ ВНИЗУ ========== */
+/* Диалог */
 .dialog-modal-sim {
     position: fixed;
     top: 0;
@@ -307,7 +141,6 @@ body.dark-theme .feature-item {
     justify-content: center;
     z-index: 10000;
 }
-
 .dialog-content-sim {
     background: white;
     border-radius: 32px;
@@ -321,19 +154,10 @@ body.dark-theme .feature-item {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     margin: 20px;
 }
-
 @keyframes slideIn { 
-    from { 
-        transform: translateY(30px) scale(0.95); 
-        opacity: 0; 
-    } 
-    to { 
-        transform: translateY(0) scale(1); 
-        opacity: 1; 
-    } 
+    from { transform: translateY(30px) scale(0.95); opacity: 0; } 
+    to { transform: translateY(0) scale(1); opacity: 1; } 
 }
-
-/* КАРТИНКА СВЕРХУ - САМАЯ БОЛЬШАЯ */
 .client-avatar-dialog-sim {
     width: 150px;
     height: 150px;
@@ -347,21 +171,8 @@ body.dark-theme .feature-item {
     align-items: center;
     justify-content: center;
 }
-.client-avatar-dialog-sim img { 
-    width: 100%; 
-    height: 100%; 
-    object-fit: cover; 
-}
-
-/* ИМЯ КЛИЕНТА */
-.dialog-client-name-sim {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-bottom: 15px;
-    color: inherit;
-}
-
-/* ТЕКСТ ВОПРОСА ПОСЕРЕДИНЕ */
+.client-avatar-dialog-sim img { width: 100%; height: 100%; object-fit: cover; }
+.dialog-client-name-sim { font-size: 1.5rem; font-weight: bold; margin-bottom: 15px; }
 .dialog-question-sim {
     font-size: 1.1rem;
     margin: 15px 0 25px;
@@ -370,15 +181,12 @@ body.dark-theme .feature-item {
     font-weight: 500;
     background: #f0f0f0;
 }
-
-/* ========== КРАСИВЫЕ КНОПКИ ВАРИАНТОВ ОТВЕТОВ ========== */
 .dialog-options-sim {
     display: flex;
     flex-direction: column;
     gap: 12px;
     margin-top: 10px;
 }
-
 .dialog-option-sim {
     padding: 14px 20px;
     border-radius: 60px;
@@ -393,54 +201,21 @@ body.dark-theme .feature-item {
     color: #2c3e50;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-
-/* Эффект при наведении */
 .dialog-option-sim:hover {
     background: linear-gradient(135deg, #f39c12, #e67e22);
     color: white;
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
 }
-
-/* Эффект при клике */
-.dialog-option-sim:active {
-    transform: translateY(0px);
-}
-
-/* Анимация появления кнопок */
-.dialog-option-sim {
-    animation: fadeInUp 0.4s ease backwards;
-}
-
-.dialog-option-sim:nth-child(1) { animation-delay: 0.05s; }
-.dialog-option-sim:nth-child(2) { animation-delay: 0.1s; }
-.dialog-option-sim:nth-child(3) { animation-delay: 0.15s; }
-.dialog-option-sim:nth-child(4) { animation-delay: 0.2s; }
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(15px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Стили для кнопок в тёмной теме */
+.dialog-option-sim:active { transform: translateY(0px); }
 body.dark-theme .dialog-option-sim {
     background: linear-gradient(135deg, #1e293b, #0f172a);
     color: #e2e8f0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
-
 body.dark-theme .dialog-option-sim:hover {
     background: linear-gradient(135deg, #f39c12, #e67e22);
     color: white;
 }
-
-/* ОБРАТНАЯ СВЯЗЬ */
 .feedback-box-sim {
     padding: 18px;
     border-radius: 20px;
@@ -449,26 +224,10 @@ body.dark-theme .dialog-option-sim:hover {
     line-height: 1.5;
     text-align: left;
 }
-.feedback-correct { 
-    background: linear-gradient(135deg, #e8f5e9, #c8e6c9); 
-    color: #2e7d32; 
-    border-left: 4px solid #4caf50; 
-}
-.feedback-wrong { 
-    background: linear-gradient(135deg, #ffebee, #ffcdd2); 
-    color: #c62828; 
-    border-left: 4px solid #f44336; 
-}
-body.dark-theme .feedback-correct { 
-    background: linear-gradient(135deg, #1b5e20, #2e7d32); 
-    color: #c8e6c9; 
-}
-body.dark-theme .feedback-wrong { 
-    background: linear-gradient(135deg, #b71c1c, #c62828); 
-    color: #ffcdd2; 
-}
-
-/* КРАСИВАЯ КНОПКА "СЛЕДУЮЩИЙ КЛИЕНТ" */
+.feedback-correct { background: linear-gradient(135deg, #e8f5e9, #c8e6c9); color: #2e7d32; border-left: 4px solid #4caf50; }
+.feedback-wrong { background: linear-gradient(135deg, #ffebee, #ffcdd2); color: #c62828; border-left: 4px solid #f44336; }
+body.dark-theme .feedback-correct { background: linear-gradient(135deg, #1b5e20, #2e7d32); color: #c8e6c9; }
+body.dark-theme .feedback-wrong { background: linear-gradient(135deg, #b71c1c, #c62828); color: #ffcdd2; }
 .next-btn-sim {
     background: linear-gradient(135deg, #f39c12, #e67e22);
     color: white;
@@ -480,20 +239,10 @@ body.dark-theme .feedback-wrong {
     cursor: pointer;
     width: 100%;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
     margin-top: 10px;
 }
-
-.next-btn-sim:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(243, 156, 18, 0.4);
-}
-
-.next-btn-sim:active {
-    transform: translateY(0px);
-}
-
-/* ПРАВАЯ ПАНЕЛЬ */
+.next-btn-sim:hover { transform: translateY(-2px); }
+/* Правая панель */
 .office-controls { width: 260px; display: flex; flex-direction: column; gap: 20px; }
 .controls-card {
     border-radius: 16px; padding: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
@@ -526,7 +275,6 @@ body.dark-theme .feedback-wrong {
     color: #f39c12; 
 }
 .progress-text { margin-top: 10px; font-size: 0.9rem; }
-
 .control-btn { 
     width: 100%; 
     padding: 12px; 
@@ -542,8 +290,23 @@ body.dark-theme .feedback-wrong {
 .reset-btn:hover { background: #c0392b; transform: translateY(-2px); }
 .save-btn { background: #3498db; color: white; }
 .save-btn:hover { background: #2980b9; transform: translateY(-2px); }
-
-/* РЕЗУЛЬТАТЫ */
+.help-btn-tutorial {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 40px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 8px;
+    transition: 0.2s;
+}
+.help-btn-tutorial:hover { background: #f39c12; transform: scale(1.02); }
+/* Результаты */
 .results-card-sim { text-align: center; }
 .results-icon { font-size: 4rem; margin-bottom: 20px; }
 .results-title { font-size: 1.8rem; margin-bottom: 15px; }
@@ -552,7 +315,6 @@ body.dark-theme .feedback-wrong {
 .leaderboard-table-sim { width: 100%; border-collapse: collapse; border-radius: 12px; overflow: hidden; }
 .leaderboard-table-sim th, .leaderboard-table-sim td { padding: 10px; text-align: center; border-bottom: 1px solid #ddd; }
 .leaderboard-table-sim th { background: #f39c12; color: white; }
-
 .share-buttons-sim { display: flex; gap: 10px; justify-content: center; margin: 20px 0; flex-wrap: wrap; }
 .share-btn-sim { padding: 10px 20px; border: none; border-radius: 30px; cursor: pointer; font-size: 0.85rem; font-weight: bold; transition: all 0.3s ease; }
 .share-telegram-sim { background: #0088cc; color: white; }
@@ -565,11 +327,9 @@ body.dark-theme .feedback-wrong {
     background: linear-gradient(135deg, #f39c12, #e67e22);
     color: white; border: none; padding: 12px 24px; border-radius: 40px;
     font-size: 1rem; cursor: pointer; width: 100%; font-weight: bold; margin-top: 15px;
-    transition: all 0.3s ease;
 }
-.play-again-btn-sim:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(243,156,18,0.3); }
-
-/* УВЕДОМЛЕНИЕ */
+.play-again-btn-sim:hover { transform: translateY(-2px); }
+/* Уведомления */
 .toast-notification {
     position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
     background: rgba(0,0,0,0.85); color: white; padding: 12px 24px;
@@ -581,8 +341,7 @@ body.dark-theme .feedback-wrong {
     70% { opacity: 1; }
     100% { opacity: 0; transform: translateX(-50%) translateY(20px); visibility: hidden; }
 }
-
-/* АДАПТИВНОСТЬ */
+/* Адаптив */
 @media (max-width: 1024px) {
     .office-main { flex-direction: column; }
     .office-sidebar, .office-controls { width: 100%; }
@@ -591,37 +350,8 @@ body.dark-theme .feedback-wrong {
 @media (max-width: 768px) {
     .office-header { flex-direction: column; text-align: center; padding: 15px; }
     .office-logo { flex-direction: column; }
-    .agent-avatar { width: 50px; height: 50px; }
     .client-avatar-sim { width: 120px; height: 120px; }
-    .client-name-sim { font-size: 1.2rem; }
     .client-avatar-dialog-sim { width: 100px; height: 100px; }
-    .dialog-client-name-sim { font-size: 1.2rem; }
     .dialog-question-sim { font-size: 0.9rem; }
     .dialog-option-sim { padding: 12px 16px; font-size: 0.85rem; }
-    .theme-toggle-btn { order: -1; width: 100%; margin-bottom: 10px; }
-    .dialog-content-sim { padding: 20px; margin: 10px; width: 95%; }
-    .welcome-title { font-size: 1.5rem; }
-    .features-grid { grid-template-columns: 1fr; }
-    .name-input-container { padding: 24px 20px; }
-}
-@media (min-width: 1200px) {
-    .client-avatar-dialog-sim { width: 180px; height: 180px; }
-    .dialog-client-name-sim { font-size: 1.6rem; }
-    .dialog-option-sim { padding: 16px 24px; font-size: 1rem; }
-}
-
-/* Стили для скролла */
-.dialog-content-sim::-webkit-scrollbar {
-    width: 6px;
-}
-.dialog-content-sim::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-}
-.dialog-content-sim::-webkit-scrollbar-thumb {
-    background: #f39c12;
-    border-radius: 10px;
-}
-body.dark-theme .dialog-content-sim::-webkit-scrollbar-track {
-    background: #1e293b;
 }
