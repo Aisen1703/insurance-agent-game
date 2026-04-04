@@ -11,7 +11,6 @@
 </head>
 <body>
     <div class="simulator-container">
-        <!-- Верхняя панель -->
         <header class="office-header">
             <div class="office-logo">
                 <div class="agent-avatar">
@@ -30,11 +29,9 @@
                 <div class="stat"><span class="stat-icon">📊</span><span class="stat-value" id="success-rate">0</span><span class="stat-label">% успеха</span></div>
             </div>
         </header>
-
         <div class="office-main">
-            <!-- Левая панель -->
             <aside class="office-sidebar">
-                <div class="sidebar-card">
+                <div class="sidebar-card glass-card">
                     <h3>📋 Сегодняшние показатели</h3>
                     <div class="today-stats">
                         <div class="today-stat"><span>✅ Правильных ответов:</span><span id="correct-count">0</span></div>
@@ -42,31 +39,27 @@
                         <div class="today-stat"><span>📈 Текущая серия:</span><span id="streak">0</span></div>
                     </div>
                 </div>
-                <div class="sidebar-card">
+                <div class="sidebar-card glass-card">
                     <h3>🏆 Доска лидеров</h3>
                     <div id="leaderboard-mini" class="leaderboard-mini"><div class="loading">Загрузка...</div></div>
                 </div>
-                <div class="sidebar-card">
+                <div class="sidebar-card glass-card">
                     <h3>📖 Подсказка</h3>
                     <p class="tip-text">💡 Внимательно читай проблему клиента и выбирай страховку, которая лучше всего подходит!</p>
                 </div>
             </aside>
-
-            <!-- Центральная часть -->
             <main class="office-desk">
                 <div id="game-area"></div>
             </main>
-
-            <!-- Правая панель -->
             <aside class="office-controls">
-                <div class="controls-card">
+                <div class="controls-card glass-card">
                     <h3>📊 Прогресс</h3>
                     <div class="progress-ring">
                         <div class="progress-circle" id="progress-circle"><span id="progress-percent">0%</span></div>
                     </div>
                     <div class="progress-text"><span id="clients-done">0</span>/<span id="total-clients">14</span> клиентов</div>
                 </div>
-                <div class="controls-card">
+                <div class="controls-card glass-card">
                     <h3>⚙️ Управление</h3>
                     <button id="reset-btn" class="control-btn reset-btn">🔄 Начать заново</button>
                     <button id="save-btn" class="control-btn save-btn">💾 Сохранить прогресс</button>

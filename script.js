@@ -249,12 +249,13 @@ function shuffleCaseOrder() {
 
 function askForName(callback) {
     gameArea.innerHTML = `
-        <div class="name-input-modal" style="position: relative; background: transparent; padding: 0;">
-            <div class="name-input-content" style="max-width: 350px; margin: 0 auto;">
-                <h2>👋 Добро пожаловать в симулятор!</h2>
-                <p style="margin-bottom: 16px;">Введите имя страхового агента</p>
-                <input type="text" id="player-name-input" class="name-input-field" placeholder="Ваше имя" maxlength="20">
-                <button id="submit-name-btn" class="primary-btn">Начать работу →</button>
+        <div style="display: flex; align-items: center; justify-content: center; min-height: 400px;">
+            <div class="name-input-content">
+                <div style="font-size: 4rem;">👋</div>
+                <h2>Добро пожаловать в симулятор!</h2>
+                <p style="margin-bottom: 20px; opacity: 0.8;">Введите имя страхового агента</p>
+                <input type="text" id="player-name-input" class="name-input-field" placeholder="Например, Алексей" maxlength="20" autocomplete="off">
+                <button id="submit-name-btn" class="primary-btn">✨ Начать работу →</button>
             </div>
         </div>
     `;
