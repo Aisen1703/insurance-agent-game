@@ -125,7 +125,7 @@ body.dark-theme .dialog-question-sim { background: #1e293b; color: #cbd5e1; }
     background: linear-gradient(135deg, #004DE5, #80B2F2);
     color: white; border: none; padding: 14px 32px; border-radius: 50px;
     font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: all 0.2s;
-    margin-top: 10px; box-shadow: 0 4px 15px rgba(243,156,18,0.3);
+    margin-top: 10px; box-shadow: 0 4px 15px rgba(128,178,242,0.3);
 }
 .help-btn-sim:hover { transform: translateY(-2px); }
 /* Диалог */
@@ -205,7 +205,7 @@ body.dark-theme .dialog-question-sim { background: #1e293b; color: #cbd5e1; }
     background: linear-gradient(135deg, #004DE5, #80B2F2);
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(243, 156, 18, 0.4);
+    box-shadow: 0 6px 20px rgba(128,178,242, 0.4);
 }
 .dialog-option-sim:active { transform: translateY(0px); }
 body.dark-theme .dialog-option-sim {
