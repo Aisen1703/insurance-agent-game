@@ -9,7 +9,7 @@ let gameCompleted = false;
 let playerName = localStorage.getItem('playerName') || '';
 
 const TOTAL_POSSIBLE_SCORE = 140;
-const TOTAL_CLIENTS = 14;
+const TOTAL_CLIENTS = 7;
 let caseOrder = [];
 
 // Элементы DOM
@@ -441,7 +441,7 @@ function completeGame() {
                 <button class="share-btn-sim share-vk-sim" id="share-vk">🌐 VK</button>
                 <button class="share-btn-sim share-copy-sim" id="share-copy">📋 Копировать</button>
             </div>
-            <button class="play-again-btn-sim" id="play-again">🔄 Начать новую смену</button>
+            <button class="play-again-btn-sim" id="play-again">🔄 Играть заново</button>
         </div>
     `;
     document.getElementById('play-again').onclick = () => initGame(false);
