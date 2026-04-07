@@ -9,7 +9,7 @@ let gameCompleted = false;
 let playerName = localStorage.getItem('playerName') || '';
 
 const TOTAL_POSSIBLE_SCORE = 70;  // 7 клиентов × 10 очков
-const TOTAL_CLIENTS = 7;
+const TOTAL_CLIENTS = 6;
 let caseOrder = [];
 
 // Элементы DOM
@@ -307,10 +307,10 @@ function renderClientScreen(client, currentCase) {
                 "${client.problem}"
             </div>
             <div class="client-meta" style="margin: 10px 0; font-size: 0.85rem; color: #004DE5;">
-                Кейс ${caseNumber}/${caseOrder.length} • Клиент ${clientNumber}/${totalClientsInCase}
+                Кейс ${caseNumber}/${caseOrder.length}
             </div>
             <div style="display: flex; gap: 12px; justify-content: center;">
-                <button class="help-btn-sim" id="help-client-btn">🤝 Помочь клиенту</button>
+                <button class="help-btn-sim" id="help-client-btn">Помочь клиенту</button>
                 
         </div>
     `;
@@ -453,6 +453,7 @@ function completeGame() {
             </div>
             <div class="leaderboard-full">
                 <h4>🏆 Доска лидеров</h4>
+                <br>
                 <table class="leaderboard-table-sim"><thead><tr><th>#</th><th>Игрок</th><th>Очки</th><th>Дата</th></tr></thead><tbody>${leaderboardRows}</tbody></table>
             </div>
             <div class="share-buttons-sim">
