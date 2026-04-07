@@ -1,3 +1,3 @@
 #f39c12 orange --> #004DE5
 #e67e22 orange --> #80B2F2
-rgba(243, 156, 18, 0.4) orange -->
+rgba(243, 156, 18, 0.4) orange --> rgba(128,178,242, 0.4)

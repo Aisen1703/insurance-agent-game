@@ -286,14 +286,14 @@ body.dark-theme .feedback-wrong { background: linear-gradient(135deg, #b71c1c, #
     cursor: pointer; 
     transition: all 0.3s ease; 
 }
-.reset-btn { background: #e74c3c; color: white; }
-.reset-btn:hover { background: #c0392b; transform: translateY(-2px); }
-.save-btn { background: #3498db; color: white; }
-.save-btn:hover { background: #2980b9; transform: translateY(-2px); }
+.reset-btn { background: white; color: black; border: 1px solid #80B2F2; }
+.reset-btn:hover { background: #80B2F2; transform: translateY(-2px); }
+.save-btn { background: white; color: black; border: 1px solid #80B2F2; }
+.save-btn:hover { background: #80B2F2; transform: translateY(-2px); }
 .help-btn-tutorial {
-    background: #2c3e50;
-    color: white;
-    border: none;
+    background: white;
+    color: black;
+    border: 1px solid #80B2F2;
     padding: 12px;
     border-radius: 40px;
     cursor: pointer;
@@ -305,7 +305,7 @@ body.dark-theme .feedback-wrong { background: linear-gradient(135deg, #b71c1c, #
     margin-top: 8px;
     transition: 0.2s;
 }
-.help-btn-tutorial:hover { background: #004DE5; transform: scale(1.02); }
+.help-btn-tutorial:hover { background: #80B2F2; transform: scale(1.02); }
 /* Результаты */
 .results-card-sim { text-align: center; }
 .results-icon { font-size: 4rem; margin-bottom: 20px; }
