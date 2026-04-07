@@ -8,7 +8,7 @@ let currentStreak = 0;
 let gameCompleted = false;
 let playerName = localStorage.getItem('playerName') || '';
 
-const TOTAL_POSSIBLE_SCORE = 140;
+const TOTAL_POSSIBLE_SCORE = 70;  // 7 клиентов × 10 очков
 const TOTAL_CLIENTS = 7;
 let caseOrder = [];
 
@@ -28,6 +28,7 @@ const playerNameDisplay = document.getElementById('player-name-display');
 const resetBtn = document.getElementById('reset-btn');
 const saveBtn = document.getElementById('save-btn');
 const tutorialBtn = document.getElementById('tutorial-btn');
+const togglePanelsBtn = document.getElementById('toggle-panels-btn');
 
 totalClientsSpan.textContent = TOTAL_CLIENTS;
 
@@ -43,7 +44,7 @@ function updateStats() {
     const successRate = totalAnswered > 0 ? Math.round((correctAnswers / totalAnswered) * 100) : 0;
     successRateSpan.textContent = successRate;
     
-    const rating = Math.min(5, Math.floor(totalScore / 28));
+    const rating = Math.min(5, Math.floor(totalScore / 14)); // 70/5 = 14 очков на звезду
     ratingSpan.textContent = '★'.repeat(rating) + '☆'.repeat(5 - rating);
     
     const processed = correctAnswers + wrongAnswers;
@@ -54,7 +55,7 @@ function updateStats() {
     const progressCircle = document.querySelector('.progress-circle');
     if (progressCircle) {
         const angle = (processed / TOTAL_CLIENTS) * 360;
-        progressCircle.style.background = `conic-gradient(#f39c12 ${angle}deg, #ecf0f1 ${angle}deg)`;
+        progressCircle.style.background = `conic-gradient(#80B2F2 ${angle}deg, #ecf0f1 ${angle}deg)`;
     }
 }
 
@@ -168,11 +169,11 @@ function showTutorial() {
     const tutorialHTML = `
         <div class="tutorial-overlay" id="tutorial-overlay" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:20000; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px);">
             <div style="background:white; border-radius:32px; max-width:550px; width:90%; max-height:80vh; overflow-y:auto; padding:28px 24px; box-shadow:0 25px 40px rgba(0,0,0,0.3); animation:fadeInUp 0.3s ease;">
-                <h2 style="font-size:1.6rem; margin-bottom:16px; display:flex; align-items:center; gap:10px; border-bottom:2px solid #004DE5; padding-bottom:12px;">📚 Обучение страхового агента</h2>
+                <h2 style="font-size:1.6rem; margin-bottom:16px; display:flex; align-items:center; gap:10px; border-bottom:2px solid #80B2F2; padding-bottom:12px;">📚 Обучение страхового агента</h2>
                 <div style="margin:20px 0; padding:12px; background:#f8f9fa; border-radius:20px; border-left:4px solid #80B2F2;"><strong style="color: black; display:block; margin-bottom:8px;">🎯 Очки и рейтинг</strong>За каждый правильный ответ ты получаешь <strong>10 очков</strong>. Чем больше очков, тем выше рейтинг (звёзды). Максимум — 5 звёзд.</div>
                 <div style="margin:20px 0; padding:12px; background:#f8f9fa; border-radius:20px; border-left:4px solid #80B2F2;"><strong style="color: black; display:block; margin-bottom:8px;">📊 Панель статистики</strong>Слева вверху видно общее количество очков, рейтинг, число обслуженных клиентов и процент успеха.</div>
                 <div style="margin:20px 0; padding:12px; background:#f8f9fa; border-radius:20px; border-left:4px solid #80B2F2;"><strong style="color: black; display:block; margin-bottom:8px;">📋 Сегодняшние показатели</strong>Здесь показано, сколько правильных и неправильных ответов ты дал за текущую сессию, а также текущая серия успехов.</div>
-                <div style="margin:20px 0; padding:12px; background:#f8f9fa; border-radius:20px; border-left:4px solid #80B2F2;"><strong style="color: black; display:block; margin-bottom:8px;">👥 Клиент и его проблема</strong>В центре появляется клиент с описанием ситуации. Внимательно читай! Нажми «🤝 Помочь клиенту», чтобы дать совет.</div>
+                <div style="margin:20px 0; padding:12px; background:#f8f9fa; border-radius:20px; border-left:4px solid #80B2F2;"><strong style="color: black; display:block; margin-bottom:8px;">👥 Клиент и его проблема</strong>В центре появляется клиент с описанием ситуации. Внимательно читай! Нажми «Помочь клиенту», чтобы дать совет.</div>
                 <div style="margin:20px 0; padding:12px; background:#f8f9fa; border-radius:20px; border-left:4px solid #80B2F2;"><strong style="color: black; display:block; margin-bottom:8px;">💡 Варианты ответов</strong>После нажатия кнопки помощи откроется окно с вариантами страховок. Выбери подходящий. После ответа увидишь объяснение.</div>
                 <div style="margin:20px 0; padding:12px; background:#f8f9fa; border-radius:20px; border-left:4px solid #80B2F2;"><strong style="color: black; display:block; margin-bottom:8px;">📈 Прогресс и управление</strong>Круглый индикатор показывает, сколько клиентов уже обслужено. Кнопки «Начать заново» сбросят игру, «Сохранить прогресс» сохранят текущее состояние.</div>
                 <div style="margin:20px 0; padding:12px; background:#f8f9fa; border-radius:20px; border-left:4px solid #80B2F2;"><strong style="color: black; display:block; margin-bottom:8px;">🏆 Доска лидеров</strong>Твои лучшие результаты сохраняются. После завершения игры ты попадёшь в таблицу рекордов.</div>
@@ -308,10 +309,16 @@ function renderClientScreen(client, currentCase) {
             <div class="client-meta" style="margin: 10px 0; font-size: 0.85rem; color: #004DE5;">
                 Кейс ${caseNumber}/${caseOrder.length} • Клиент ${clientNumber}/${totalClientsInCase}
             </div>
-            <button class="help-btn-sim" id="help-client-btn">Помочь клиенту</button>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button class="help-btn-sim" id="help-client-btn">🤝 Помочь клиенту</button>
+                
         </div>
     `;
     document.getElementById('help-client-btn').onclick = () => showDialog(client);
+    document.getElementById('repeat-client-btn').onclick = () => {
+        // Повторно показываем того же клиента (без изменения прогресса)
+        renderClientScreen(client, currentCase);
+    };
 }
 
 function showDialog(client) {
@@ -329,6 +336,7 @@ function showDialog(client) {
     gameArea.innerHTML = `
         <div class="dialog-modal-sim">
             <div class="dialog-content-sim">
+                <button class="dialog-close-btn" id="close-dialog-btn">✖</button>
                 <div class="client-avatar-dialog-sim">
                     <img src="${client.imageUrl || ''}" alt="${client.name}" onerror="this.style.display='none'">
                 </div>
@@ -342,6 +350,17 @@ function showDialog(client) {
             </div>
         </div>
     `;
+    
+    // Обработчик закрытия диалога
+    const closeBtn = document.getElementById('close-dialog-btn');
+    if (closeBtn) {
+        closeBtn.onclick = () => {
+            // Возвращаемся к карточке клиента без ответа
+            const currentCase = getCurrentCase();
+            const currentClient = getCurrentClient();
+            if (currentClient) renderClientScreen(currentClient, currentCase);
+        };
+    }
     
     document.querySelectorAll('.dialog-option-sim').forEach(btn => {
         btn.onclick = () => {
@@ -399,14 +418,14 @@ function completeGame() {
     let emoji = '', message = '';
     if (totalScore === TOTAL_POSSIBLE_SCORE) {
         emoji = '🏆';
-        message = 'Ты настоящий страховой гений! Все 14 клиентов довольны!';
-    } else if (totalScore >= 110) {
+        message = 'Ты настоящий страховой гений! Все 7 клиентов довольны!';
+    } else if (totalScore >= 55) {
         emoji = '🎉';
         message = 'Отличная работа! Ты помог почти всем клиентам!';
-    } else if (totalScore >= 90) {
+    } else if (totalScore >= 45) {
         emoji = '👍';
         message = 'Хороший результат! Ещё немного практики!';
-    } else if (totalScore >= 70) {
+    } else if (totalScore >= 35) {
         emoji = '📚';
         message = 'Неплохо, но стоит повторить основы страхования.';
     } else {
@@ -484,7 +503,7 @@ resetBtn.onclick = () => {
 saveBtn.onclick = () => { if (!gameCompleted) saveGameProgress(); else showToast('Игра уже завершена! Начните новую.'); };
 tutorialBtn.onclick = () => showTutorial();
 
-// Тёмная тема
+// ========== ТЁМНАЯ ТЕМА ==========
 function initTheme() {
     const savedTheme = localStorage.getItem('theme') || 'light';
     if (savedTheme === 'dark') {
@@ -513,9 +532,34 @@ function toggleTheme() {
 }
 document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
 
-// Запуск
+// ========== ЛОГИКА СКРЫТИЯ ПАНЕЛЕЙ ==========
+function togglePanels() {
+    document.body.classList.toggle('panels-hidden');
+    const isHidden = document.body.classList.contains('panels-hidden');
+    localStorage.setItem('panelsHidden', isHidden ? 'true' : 'false');
+    if (togglePanelsBtn) {
+        togglePanelsBtn.textContent = isHidden ? '📂 Показать панели' : '📁 Скрыть панели';
+    }
+}
+
+function loadPanelsState() {
+    const saved = localStorage.getItem('panelsHidden');
+    if (saved === 'true') {
+        document.body.classList.add('panels-hidden');
+        if (togglePanelsBtn) togglePanelsBtn.textContent = '📂 Показать панели';
+    } else {
+        document.body.classList.remove('panels-hidden');
+        if (togglePanelsBtn) togglePanelsBtn.textContent = '📁 Скрыть панели';
+    }
+}
+
+// ========== ЗАПУСК ==========
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
+    loadPanelsState();
     initGame(true);
     Leaderboard.renderMini();
+    if (togglePanelsBtn) {
+        togglePanelsBtn.addEventListener('click', togglePanels);
+    }
 });
