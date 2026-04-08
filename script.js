@@ -8,32 +8,31 @@ let currentStreak = 0;
 let gameCompleted = false;
 let playerName = localStorage.getItem('playerName') || '';
 
-const TOTAL_POSSIBLE_SCORE = 70;  // 7 клиентов × 10 очков
+const TOTAL_POSSIBLE_SCORE = 60; // 6 клиентов × 10 очков (исправлено, т.к. всего 6 клиентов)
 const TOTAL_CLIENTS = 6;
 let caseOrder = [];
 
-// Элементы DOM
-const gameArea = document.getElementById('game-area');
-const scoreSpan = document.getElementById('score');
-const ratingSpan = document.getElementById('rating');
-const clientsServedSpan = document.getElementById('clients-served');
-const successRateSpan = document.getElementById('success-rate');
-const correctCountSpan = document.getElementById('correct-count');
-const wrongCountSpan = document.getElementById('wrong-count');
-const streakSpan = document.getElementById('streak');
-const clientsDoneSpan = document.getElementById('clients-done');
-const totalClientsSpan = document.getElementById('total-clients');
-const progressPercentSpan = document.getElementById('progress-percent');
-const playerNameDisplay = document.getElementById('player-name-display');
-const resetBtn = document.getElementById('reset-btn');
-const saveBtn = document.getElementById('save-btn');
-const tutorialBtn = document.getElementById('tutorial-btn');
-const togglePanelsBtn = document.getElementById('toggle-panels-btn');
-
-totalClientsSpan.textContent = TOTAL_CLIENTS;
+// Элементы DOM (часть будет проинициализирована позже)
+let gameArea;
+let scoreSpan;
+let ratingSpan;
+let clientsServedSpan;
+let successRateSpan;
+let correctCountSpan;
+let wrongCountSpan;
+let streakSpan;
+let clientsDoneSpan;
+let totalClientsSpan;
+let progressPercentSpan;
+let playerNameDisplay;
+let resetBtn;
+let saveBtn;
+let tutorialBtn;
+let togglePanelsBtn;
 
 // Обновление статистики
 function updateStats() {
+    if (!scoreSpan) return;
     scoreSpan.textContent = totalScore;
     clientsServedSpan.textContent = correctAnswers + wrongAnswers;
     correctCountSpan.textContent = correctAnswers;
@@ -44,7 +43,7 @@ function updateStats() {
     const successRate = totalAnswered > 0 ? Math.round((correctAnswers / totalAnswered) * 100) : 0;
     successRateSpan.textContent = successRate;
     
-    const rating = Math.min(5, Math.floor(totalScore / 14)); // 70/5 = 14 очков на звезду
+    const rating = Math.min(5, Math.floor(totalScore / 12)); // 60/5 = 12 очков на звезду
     ratingSpan.textContent = '★'.repeat(rating) + '☆'.repeat(5 - rating);
     
     const processed = correctAnswers + wrongAnswers;
@@ -311,14 +310,10 @@ function renderClientScreen(client, currentCase) {
             </div>
             <div style="display: flex; gap: 12px; justify-content: center;">
                 <button class="help-btn-sim" id="help-client-btn">Помочь клиенту</button>
-                
+            </div>
         </div>
     `;
     document.getElementById('help-client-btn').onclick = () => showDialog(client);
-    document.getElementById('repeat-client-btn').onclick = () => {
-        // Повторно показываем того же клиента (без изменения прогресса)
-        renderClientScreen(client, currentCase);
-    };
 }
 
 function showDialog(client) {
@@ -418,14 +413,14 @@ function completeGame() {
     let emoji = '', message = '';
     if (totalScore === TOTAL_POSSIBLE_SCORE) {
         emoji = '🏆';
-        message = 'Ты настоящий страховой гений! Все 7 клиентов довольны!';
-    } else if (totalScore >= 55) {
+        message = 'Ты настоящий страховой гений! Все клиенты довольны!';
+    } else if (totalScore >= 50) {
         emoji = '🎉';
         message = 'Отличная работа! Ты помог почти всем клиентам!';
-    } else if (totalScore >= 45) {
+    } else if (totalScore >= 40) {
         emoji = '👍';
         message = 'Хороший результат! Ещё немного практики!';
-    } else if (totalScore >= 35) {
+    } else if (totalScore >= 30) {
         emoji = '📚';
         message = 'Неплохо, но стоит повторить основы страхования.';
     } else {
@@ -495,51 +490,17 @@ function saveGameProgress() {
     else showToast('Сначала начните игру!');
 }
 
-resetBtn.onclick = () => {
-    if (confirm('Начать новую смену? Весь прогресс будет потерян.')) {
-        GameSave.clear();
-        initGame(false);
-    }
-};
-saveBtn.onclick = () => { if (!gameCompleted) saveGameProgress(); else showToast('Игра уже завершена! Начните новую.'); };
-tutorialBtn.onclick = () => showTutorial();
-
-// ========== ТЁМНАЯ ТЕМА ==========
-function initTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    if (savedTheme === 'dark') {
-        document.body.classList.add('dark-theme');
-        document.body.classList.remove('light-theme');
-        document.getElementById('theme-toggle').innerHTML = '☀️ Светлая тема';
-    } else {
-        document.body.classList.add('light-theme');
-        document.body.classList.remove('dark-theme');
-        document.getElementById('theme-toggle').innerHTML = '🌙 Тёмная тема';
-    }
-}
-function toggleTheme() {
-    const btn = document.getElementById('theme-toggle');
-    if (document.body.classList.contains('dark-theme')) {
-        document.body.classList.remove('dark-theme');
-        document.body.classList.add('light-theme');
-        localStorage.setItem('theme', 'light');
-        btn.innerHTML = '🌙 Тёмная тема';
-    } else {
-        document.body.classList.remove('light-theme');
-        document.body.classList.add('dark-theme');
-        localStorage.setItem('theme', 'dark');
-        btn.innerHTML = '☀️ Светлая тема';
-    }
-}
-document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
-
-// ========== ЛОГИКА СКРЫТИЯ ПАНЕЛЕЙ ==========
+// Функция скрытия/показа панелей с закрытием модального окна
 function togglePanels() {
+    // Закрываем любое открытое модальное окно (диалог выбора страховки)
+    const modal = document.querySelector('.dialog-modal-sim');
+    if (modal) modal.remove();
+    
     document.body.classList.toggle('panels-hidden');
     const isHidden = document.body.classList.contains('panels-hidden');
     localStorage.setItem('panelsHidden', isHidden ? 'true' : 'false');
     if (togglePanelsBtn) {
-        togglePanelsBtn.textContent = isHidden ? '📂 Показать панели' : '📁 Скрыть панели';
+        togglePanelsBtn.textContent = isHidden ? 'МЕНЮ' : 'МЕНЮ';
     }
 }
 
@@ -547,20 +508,80 @@ function loadPanelsState() {
     const saved = localStorage.getItem('panelsHidden');
     if (saved === 'true') {
         document.body.classList.add('panels-hidden');
-        if (togglePanelsBtn) togglePanelsBtn.textContent = '📂 Показать панели';
+        if (togglePanelsBtn) togglePanelsBtn.textContent = 'МЕНЮ';
     } else {
         document.body.classList.remove('panels-hidden');
-        if (togglePanelsBtn) togglePanelsBtn.textContent = '📁 Скрыть панели';
+        if (togglePanelsBtn) togglePanelsBtn.textContent = 'МЕНЮ';
+    }
+}
+
+// ========== ТЁМНАЯ ТЕМА ==========
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        document.body.classList.remove('light-theme');
+        const themeBtn = document.getElementById('theme-toggle');
+        if (themeBtn) themeBtn.innerHTML = '☀️ Светлая тема';
+    } else {
+        document.body.classList.add('light-theme');
+        document.body.classList.remove('dark-theme');
+        const themeBtn = document.getElementById('theme-toggle');
+        if (themeBtn) themeBtn.innerHTML = '🌙 Тёмная тема';
+    }
+}
+
+function toggleTheme() {
+    const btn = document.getElementById('theme-toggle');
+    if (document.body.classList.contains('dark-theme')) {
+        document.body.classList.remove('dark-theme');
+        document.body.classList.add('light-theme');
+        localStorage.setItem('theme', 'light');
+        if (btn) btn.innerHTML = '🌙 Тёмная тема';
+    } else {
+        document.body.classList.remove('light-theme');
+        document.body.classList.add('dark-theme');
+        localStorage.setItem('theme', 'dark');
+        if (btn) btn.innerHTML = '☀️ Светлая тема';
     }
 }
 
 // ========== ЗАПУСК ==========
 document.addEventListener('DOMContentLoaded', () => {
+    // Инициализация элементов DOM
+    gameArea = document.getElementById('game-area');
+    scoreSpan = document.getElementById('score');
+    ratingSpan = document.getElementById('rating');
+    clientsServedSpan = document.getElementById('clients-served');
+    successRateSpan = document.getElementById('success-rate');
+    correctCountSpan = document.getElementById('correct-count');
+    wrongCountSpan = document.getElementById('wrong-count');
+    streakSpan = document.getElementById('streak');
+    clientsDoneSpan = document.getElementById('clients-done');
+    totalClientsSpan = document.getElementById('total-clients');
+    progressPercentSpan = document.getElementById('progress-percent');
+    playerNameDisplay = document.getElementById('player-name-display');
+    resetBtn = document.getElementById('reset-btn');
+    saveBtn = document.getElementById('save-btn');
+    tutorialBtn = document.getElementById('tutorial-btn');
+    togglePanelsBtn = document.getElementById('toggle-panels-btn');
+    
+    // Назначение обработчиков
+    if (resetBtn) resetBtn.onclick = () => {
+        if (confirm('Начать новую смену? Весь прогресс будет потерян.')) {
+            GameSave.clear();
+            initGame(false);
+        }
+    };
+    if (saveBtn) saveBtn.onclick = () => { if (!gameCompleted) saveGameProgress(); else showToast('Игра уже завершена! Начните новую.'); };
+    if (tutorialBtn) tutorialBtn.onclick = () => showTutorial();
+    if (togglePanelsBtn) togglePanelsBtn.addEventListener('click', togglePanels);
+    
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
+    
     initTheme();
     loadPanelsState();
     initGame(true);
     Leaderboard.renderMini();
-    if (togglePanelsBtn) {
-        togglePanelsBtn.addEventListener('click', togglePanels);
-    }
 });

@@ -28,7 +28,7 @@ body.dark-theme .sidebar-card, body.dark-theme .controls-card { background: #0f1
 body.dark-theme .office-desk { background: #1e293b; }
 body.dark-theme .dialog-content-sim { background: #0f172a; }
 body.dark-theme .dialog-question-sim { background: #1e293b; color: #cbd5e1; }
-/* Кнопка темы */
+/* Кнопка темы и кнопка меню — высокий z-index */
 .theme-toggle-btn {
     background: rgba(255,255,255,0.2);
     border: none;
@@ -40,9 +40,11 @@ body.dark-theme .dialog-question-sim { background: #1e293b; color: #cbd5e1; }
     cursor: pointer;
     transition: all 0.3s ease;
     backdrop-filter: blur(5px);
+    position: relative;
+    z-index: 20000; /* выше модального окна */
 }
 .theme-toggle-btn:hover { background: rgba(255,255,255,0.3); transform: scale(1.02); }
-/* Шапка */
+/* Шапка тоже выше модалки */
 .office-header {
     padding: 20px 30px;
     display: flex;
@@ -51,6 +53,8 @@ body.dark-theme .dialog-question-sim { background: #1e293b; color: #cbd5e1; }
     flex-wrap: wrap;
     gap: 20px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    position: relative;
+    z-index: 15000;
 }
 .office-logo { display: flex; align-items: center; gap: 15px; }
 .agent-avatar {
@@ -153,6 +157,7 @@ body.dark-theme .dialog-question-sim { background: #1e293b; color: #cbd5e1; }
     animation: slideIn 0.3s ease;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     margin: 20px;
+    position: relative;
 }
 @keyframes slideIn { 
     from { transform: translateY(30px) scale(0.95); opacity: 0; } 
@@ -386,7 +391,4 @@ body.dark-theme .dialog-close-btn {
 }
 body.dark-theme .dialog-close-btn:hover {
     color: white;
-}
-.dialog-content-sim {
-    position: relative; /* чтобы крестик позиционировался относительно окна */
 }
